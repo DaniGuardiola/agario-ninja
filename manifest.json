@@ -18,9 +18,10 @@
         "js": ["script.js"]
     }],
     "permissions": [
+        /*
         "<all_urls>",
         "webRequest",
-        "webRequestBlocking",
+        "webRequestBlocking",*/
         "storage"
     ],
     // Fix for CSS not injecting properly

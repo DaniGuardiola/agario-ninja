@@ -304,14 +304,13 @@ var api = (function(window) {
         var key = event.keyCode || event.which;
         if (key === 87) {
             event.stopPropagation();
-            fireW();
+            //fireW();
         }
     }
 
     // Fires the W action
     function fireW() {
         triggerKeyEvent(87);
-        disableW();
     }
 
     // Disables space action
@@ -336,16 +335,16 @@ var api = (function(window) {
     function start() {
         addListeners();
         addLayer();
-        disableW();
-        disableSpace();
+        // disableW();
+        // disableSpace();
     }
 
     // Stops the extension
     function stop() {
         removeListeners();
         removeLayer();
-        enableW();
-        enableSpace();
+        // enableW();
+        // enableSpace();
     }
 
     // Publish methods in the api
