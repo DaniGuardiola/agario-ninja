@@ -1,0 +1,25 @@
+{
+    "manifest_version": 2,
+    "name": "Agar.io keyboard controls",
+    "description": "Control agar.io with the arrow keys",
+    "version": "0.1",
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts": [{
+        "matches": [
+            "http://*.agar.io/*",
+            "https://*.agar.io/*",
+            "http://*.agario.ovh/*",
+            "https://*.agario.ovh/*"
+        ],
+        "css": ["style.css"],
+        "js": ["script.js"]
+    }],
+    "permissions": [
+        "storage"
+    ],
+    // Fix for CSS not injecting properly
+    "web_accessible_resources": ["style.css"]
+}
