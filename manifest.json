@@ -5,7 +5,7 @@
     "version": "0.1",
     "background": {
         "scripts": ["background.js"],
-        "persistent": false
+        "persistent": true
     },
     "content_scripts": [{
         "matches": [
@@ -18,6 +18,9 @@
         "js": ["script.js"]
     }],
     "permissions": [
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking",
         "storage"
     ],
     // Fix for CSS not injecting properly

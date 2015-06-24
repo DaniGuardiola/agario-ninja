@@ -1,6 +1,33 @@
 "use strict";
 // Declare the API
-var api = (function() {
+var api = (function(window) {
+    // Tools:
+    // Triggers a key event
+    function triggerKeyEvent(charCode, eventName) {
+            // TODO: rewrite to define once and fire multiple times
+            eventName = eventName || "keydown"; // Useless at the moment
+            var s = document.createElement("script");
+            s.textContent = "(" + function(charCode) {
+                var event = document.createEvent("KeyboardEvents");
+                event.initKeyboardEvent(
+                    "keydown"
+                );
+                var getterCode = {
+                    get: function() {
+                        return charCode;
+                    }
+                };
+                Object.defineProperties(event, {
+                    keyCode: getterCode
+                });
+
+                window.dispatchEvent(event);
+            } + ")(" + charCode + ")";
+            (document.head || document.documentElement).appendChild(s);
+            s.parentNode.removeChild(s);
+        }
+        // End of tools
+
     // Current state of keys
     var keys = [];
 
@@ -262,16 +289,63 @@ var api = (function() {
         return document.getElementById("extension-layer");
     }
 
+    // Disables W action
+    function disableW() {
+        window.addEventListener("keydown", disableWListener, true);
+    }
+
+    // Enables W action
+    function enableW() {
+        window.removeEventListener("keydown", disableWListener, true);
+    }
+
+    // Listener that prevents W
+    function disableWListener(event) {
+        var key = event.keyCode || event.which;
+        if (key === 87) {
+            event.stopPropagation();
+            fireW();
+        }
+    }
+
+    // Fires the W action
+    function fireW() {
+        triggerKeyEvent(87);
+        disableW();
+    }
+
+    // Disables space action
+    function disableSpace() {
+        window.addEventListener("keydown", disableSpaceListener, true);
+    }
+
+    // Enables space action
+    function enableSpace() {
+        window.removeEventListener("keydown", disableSpaceListener, true);
+    }
+
+    // Listener that prevents space
+    function disableSpaceListener(event) {
+        var key = event.keyCode || event.which;
+        if (key === 32) {
+            event.stopPropagation();
+        }
+    }
+
     // Starts the extension
     function start() {
         addListeners();
         addLayer();
+        disableW();
+        disableSpace();
     }
 
     // Stops the extension
     function stop() {
         removeListeners();
         removeLayer();
+        enableW();
+        enableSpace();
     }
 
     // Publish methods in the api
@@ -281,16 +355,24 @@ var api = (function() {
         "on": start,
         "off": stop
     };
-})();
+})(window);
 api.on();
 
-// Fix for CSS not injecting properly
-(function injectCSS() {
+// #1 fix for CSS not injecting properly
+(function() {
     var style = document.createElement("link");
     style.rel = "stylesheet";
     style.type = "text/css";
     style.href = chrome.extension.getURL("style.css");
     (document.head || document.documentElement).appendChild(style);
+})();
+
+// #2 fix
+(function() {
+    var style = '#extension-layer { position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; } ';
+    var s = document.createElement("style");
+    s.innerHTML = style;
+    document.getElementsByTagName("head")[0].appendChild(s);
 })();
 
 console.log("Now you can use the keyboard ;D");

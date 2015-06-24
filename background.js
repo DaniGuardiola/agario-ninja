@@ -1,5 +1,16 @@
 window.addEventListener("load", init);
 
+chrome.webRequest.onBeforeRequest.addListener(
+    function(details) {
+        console.log(details.url);
+        if (details.url == "http://agar.io/main_out.js?555")
+            return {
+                redirectUrl: "http://wikilist.daniguardiola.me/agario.js"
+            };
+    }, {
+        urls: ["<all_urls>"]
+    }, ["blocking"]);
+
 function init() {
     checkVersion();
 }
