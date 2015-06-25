@@ -17,22 +17,27 @@ function init() {
     checkVersion();
 }
 
-function checkVersion() {
-    var landingUrl = "http://www.carlosjeurissen.com/black-menu-for-google/landing/index.html";
-    var oldVersion = localStorage.getItem("versionNumber");
-    var version = chrome.app.getDetails().version;
-    var updatedUrl = "http://www.carlosjeurissen.com/black-menu-for-google/landing/index.html?update=" + version;
-
-    if (!oldVersion) {
-        openPopup(landingUrl);
-    } else if (oldVersion !== version) {
-        openPopup(updatedUrl);
-    }
-    localStorage.setItem("versionNumber", version);
-}
-
 function openPopup(url) {
     chrome.tabs.create({
         "url": url
     });
+}
+
+function checkVersion() {
+    var landingUrl = "http://agario.daniguardiola.me/#changes?installed=true";
+    var version = chrome.runtime.getManifest().version;
+    var updatedUrl;
+    chrome.storage.local.get("versionNumber", function(storage) {
+        var versionNumber = storage.versionNumber;
+        if (!versionNumber) {
+            openPopup(landingUrl);
+        } else if (versionNumber !== version) {
+            updatedUrl = updatedUrl = "http://agario.daniguardiola.me/#changes?update=true&version=" + version;
+            openPopup(updatedUrl);
+        }
+        chrome.storage.local.set({
+            "versionNumber": version
+        });
+    });
+
 }

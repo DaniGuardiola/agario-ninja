@@ -2,10 +2,22 @@
     "manifest_version": 2,
     "name": "Agar.io keyboard controls",
     "description": "Control agar.io with the arrow keys",
-    "version": "0.1",
+    "version": "0.1.0.0",
     "background": {
         "scripts": ["background.js"],
         "persistent": true
+    },
+    "icons": {
+        "16": "agario_16.png",
+        "32": "agario_32.png",
+        "48": "agario_48.png",
+        "64": "agario_64.png",
+        "72": "agario_72.png",
+        "96": "agario_96.png",
+        "128": "agario_128.png",
+        "144": "agario_144.png",
+        "192": "agario_192.png",
+        "512": "agario_512.png"
     },
     "content_scripts": [{
         "matches": [
@@ -18,12 +30,6 @@
         "js": ["script.js"]
     }],
     "permissions": [
-        /*
-        "<all_urls>",
-        "webRequest",
-        "webRequestBlocking",*/
         "storage"
-    ],
-    // Fix for CSS not injecting properly
-    "web_accessible_resources": ["style.css"]
+    ]
 }
