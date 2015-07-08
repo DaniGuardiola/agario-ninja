@@ -1,16 +1,16 @@
 "use strict";
-// Declare the API
-var api = (function(window) {
+console.log("AGARIOOOOO LOADED");
+(function(window) {
     // Tools:
     // Triggers a key event
     function triggerKeyEvent(charCode, eventName) {
             // TODO: rewrite to define once and fire multiple times
             eventName = eventName || "keydown"; // Useless at the moment
             var s = document.createElement("script");
-            s.textContent = "(" + function(charCode) {
+            s.textContent = "(" + function(charCode, eventName) {
                 var event = document.createEvent("KeyboardEvents");
                 event.initKeyboardEvent(
-                    "keydown"
+                    eventName
                 );
                 var getterCode = {
                     get: function() {
@@ -22,9 +22,10 @@ var api = (function(window) {
                 });
 
                 window.dispatchEvent(event);
-            } + ")(" + charCode + ")";
+            } + ")(" + charCode + ", \"" + eventName + "\")";
             (document.head || document.documentElement).appendChild(s);
             s.parentNode.removeChild(s);
+            console.log(s);
         }
         // End of tools
 
@@ -33,6 +34,9 @@ var api = (function(window) {
 
     // Last direction
     var lastDirection = "stop";
+
+    // Last mouse position
+    var lastMousePosition = "stop";
 
     // Adds a key to the keys array or
     // moves it down if already included
@@ -70,10 +74,12 @@ var api = (function(window) {
             "x": dim.width / 2,
             "y": dim.height / 2
         };
+        var left = (dim.width - dim.height) / 2;
+        var right = dim.height + left;
         switch (direction) {
             case "up-left":
                 xy = {
-                    "x": 0,
+                    "x": left,
                     "y": 0
                 };
                 break;
@@ -85,7 +91,7 @@ var api = (function(window) {
                 break;
             case "up-right":
                 xy = {
-                    "x": dim.width,
+                    "x": right,
                     "y": 0
                 };
                 break;
@@ -97,7 +103,7 @@ var api = (function(window) {
                 break;
             case "down-right":
                 xy = {
-                    "x": dim.width,
+                    "x": right,
                     "y": dim.height
                 };
                 break;
@@ -109,7 +115,7 @@ var api = (function(window) {
                 break;
             case "down-left":
                 xy = {
-                    "x": 0,
+                    "x": left,
                     "y": dim.height
                 };
                 break;
@@ -145,29 +151,31 @@ var api = (function(window) {
     // Returns the name of a key based on its number
     function whichKey(number) {
         return ({
-            /* WASD
-            Disabled until I find a solution
-            for the W action
-            "65": "left",
-            "87": "up",
-            "68": "right",
-            "83": "down",
-            */
-            // Arrows
+            /* Arrows
             "37": "left",
             "38": "up",
             "39": "right",
-            "40": "down"
+            "40": "down",*/
+            // WASD
+            "65": "left",
+            "87": "up",
+            "68": "right",
+            "83": "down"
         })[number];
     }
 
     // Key down event listener
     function keyDownListener(event) {
         var key = event.keyCode || event.which;
+        // Stopping W
+        if (key === 87) {
+            event.stopPropagation();
+        }
         key = whichKey(key);
-        if (key === false) {
+        if (key === undefined) {
             return;
         }
+        addLayer();
         addKey(key);
         resolve();
     }
@@ -175,6 +183,10 @@ var api = (function(window) {
     // Key up event listener
     function keyUpListener(event) {
         var key = event.keyCode || event.which;
+        // Stopping W
+        if (key === 87) {
+            event.stopPropagation();
+        }
         key = whichKey(key);
         if (key === false) {
             return;
@@ -272,16 +284,28 @@ var api = (function(window) {
     }
 
     // Adds a layer between the overlay and the canvas
-    // to avoid mousemouse triggered by mouse
+    // to avoid mousemove triggered by mouse
     function addLayer() {
+        if (getLayer()) {
+            console.info("[Agario controls] Layer exists");
+            return;
+        }
         var layer = document.createElement("div");
         layer.id = "extension-layer";
+        layer.addEventListener("mousedown", layerMouseDownListener);
+        layer.addEventListener("mouseup", layerMouseUpListener);
+        layer.addEventListener("mousemove", layerMouseListener);
         getCanvas().parentNode.insertBefore(layer, getCanvas());
     }
 
     // Removes the layer
     function removeLayer() {
-        getLayer().parentNode.removeChild(getLayer());
+        var layer = getLayer();
+        layer.removeEventListener("mousedown", layerMouseDownListener);
+        layer.removeEventListener("mouseup", layerMouseUpListener);
+        layer.removeEventListener("mousemove", layerMouseListener);
+        layer.parentNode.removeChild(getLayer());
+        lastMousePosition = false;
     }
 
     // Gets the layer
@@ -289,73 +313,229 @@ var api = (function(window) {
         return document.getElementById("extension-layer");
     }
 
+    // Mouse button desambiguator
+    function whichMouseButton(which) {
+        var output = "left";
+        if (which == 3) {
+            output = "right";
+        }
+        if (which == 2) {
+            output = "middle";
+        }
+        return output;
+    }
+
+    // Layer on mouse down
+    function layerMouseDownListener(event) {
+        var button = whichMouseButton(event.which);
+        if (lastMousePosition) {
+            moveTo(lastMousePosition.x, lastMousePosition.y);
+        }
+        if (button === "left") {
+            fireWDown();
+        } else {
+            fireSpaceDown();
+            event.preventDefault();
+        }
+    }
+
+    // Layer on mouse up
+    function layerMouseUpListener(event) {
+        var button = whichMouseButton(event.which);
+        if (button === "left") {
+            fireWUp();
+        } else {
+            fireSpaceUp();
+        }
+        move(lastDirection);
+    }
+
+    // Layer on mousemove
+    function layerMouseListener(event) {
+        lastMousePosition = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+
     // Disables W action
     function disableW() {
-        window.addEventListener("keydown", disableWListener, true);
+        window.addEventListener("keydown", replaceWDownListener, true);
+        window.addEventListener("keyup", replaceWUpListener, true);
     }
 
     // Enables W action
     function enableW() {
-        window.removeEventListener("keydown", disableWListener, true);
+        window.removeEventListener("keydown", replaceWDownListener, true);
+        window.removeEventListener("keyup", replaceWUpListener, true);
     }
 
-    // Listener that prevents W
-    function disableWListener(event) {
+    // Listener that prevents W down
+    function replaceWDownListener(event) {
         var key = event.keyCode || event.which;
+        /* Moved to movement key listeners
         if (key === 87) {
             event.stopPropagation();
-            //fireW();
+        }*/
+        if (key === 81) {
+            if (lastMousePosition) {
+                moveTo(lastMousePosition.x, lastMousePosition.y);
+            }
+            fireWDown();
         }
     }
 
-    // Fires the W action
-    function fireW() {
+    // Listener that prevents W up
+    function replaceWUpListener(event) {
+        var key = event.keyCode || event.which;
+        /* Moved to movement key listeners        
+        if (key === 87) {
+            event.stopPropagation();
+        }*/
+        if (key === 81) {
+            fireWUp();
+            move(lastDirection);
+        }
+    }
+
+    // Fires the W keydown action
+    function fireWDown() {
         triggerKeyEvent(87);
+    }
+
+    // Fires the W keyup action
+    function fireWUp() {
+        triggerKeyEvent(87, "keyup");
+    }
+
+    // Fires the W keydown action
+    function fireSpaceDown() {
+        triggerKeyEvent(32);
+    }
+
+    // Fires the W keyup action
+    function fireSpaceUp() {
+        triggerKeyEvent(32, "keyup");
     }
 
     // Disables space action
     function disableSpace() {
-        window.addEventListener("keydown", disableSpaceListener, true);
+        window.addEventListener("keydown", replaceSpaceDownListener, true);
+        window.addEventListener("keyup", replaceSpaceUpListener, true);
     }
 
     // Enables space action
     function enableSpace() {
-        window.removeEventListener("keydown", disableSpaceListener, true);
+        window.removeEventListener("keydown", replaceSpaceDownListener, true);
+        window.removeEventListener("keyup", replaceSpaceUpListener, true);
     }
 
-    // Listener that prevents space
-    function disableSpaceListener(event) {
+    // Listener that prevents space down
+    function replaceSpaceDownListener(event) {
         var key = event.keyCode || event.which;
         if (key === 32) {
             event.stopPropagation();
         }
+        if (key === 69) {
+            if (lastMousePosition) {
+                moveTo(lastMousePosition.x, lastMousePosition.y);
+            }
+            fireSpaceDown();
+        }
+    }
+
+    // Listener that prevents space up
+    function replaceSpaceUpListener(event) {
+        var key = event.keyCode || event.which;
+        if (key === 32) {
+            event.stopPropagation();
+        }
+        if (key === 69) {
+            fireSpaceUp();
+            move(lastDirection);
+        }
+    }
+
+    // Disables context menu
+    function disableContextMenu() {
+        window.addEventListener("contextmenu", disableContextMenuListener);
+    }
+
+    // Enables context menu
+    function enableContextMenu() {
+        window.removeEventListener("contextmenu", disableContextMenuListener);
+    }
+
+    // Disable context menu listener
+    function disableContextMenuListener() {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
     }
 
     // Starts the extension
     function start() {
         addListeners();
         addLayer();
-        // disableW();
-        // disableSpace();
+        disableW();
+        disableSpace();
+        disableContextMenu();
     }
 
     // Stops the extension
     function stop() {
         removeListeners();
         removeLayer();
-        // enableW();
-        // enableSpace();
+        enableW();
+        enableSpace();
+        enableContextMenu();
     }
 
-    // Publish methods in the api
-    return {
-        "move": move,
-        "moveTo": moveTo,
-        "on": start,
-        "off": stop
-    };
+    // Detects if the page is an agario client
+    function detectAgario() {
+        var output = true;
+        // Conditions:
+        if (
+            // Has a canvas
+            !document.querySelector("canvas") ||
+            // Has #overlay
+            !document.querySelector("#overlays") ||
+            // Has #connecting
+            !document.querySelector("#connecting")
+        ) {
+            output = false;
+        }
+        return output;
+    }
+
+    // Lol m8
+    /*
+    function easterEgg() {
+        easterEggCount = 0;
+        move("up");
+        setTimeout(function() {
+            move("right");
+        }, 1000);
+        setTimeout(function() {
+            move("down");
+        }, 2000);
+        setTimeout(function() {
+            move("left");
+        }, 2500);
+        setTimeout(function() {
+            if (easterEggOn) {
+                easterEgg();
+            }
+        }, 3000);
+    }
+    */
+
+    // Start it baby!
+    if (detectAgario()) {
+        console.log("AGARIOOOOOsss DETECTED");
+        start();
+    }
 })(window);
-api.on();
 
 // #1 fix for CSS not injecting properly
 (function() {
@@ -373,5 +553,3 @@ api.on();
     s.innerHTML = style;
     document.getElementsByTagName("head")[0].appendChild(s);
 })();
-
-console.log("Now you can use the keyboard ;D");
