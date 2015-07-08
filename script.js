@@ -1,33 +1,42 @@
 "use strict";
-console.log("AGARIOOOOO LOADED");
 (function(window) {
     // Tools:
     // Triggers a key event
     function triggerKeyEvent(charCode, eventName) {
-            // TODO: rewrite to define once and fire multiple times
-            eventName = eventName || "keydown"; // Useless at the moment
-            var s = document.createElement("script");
-            s.textContent = "(" + function(charCode, eventName) {
-                var event = document.createEvent("KeyboardEvents");
-                event.initKeyboardEvent(
-                    eventName
-                );
-                var getterCode = {
-                    get: function() {
-                        return charCode;
-                    }
-                };
-                Object.defineProperties(event, {
-                    keyCode: getterCode
-                });
+        eventName = eventName || "keydown";
+        var s = document.createElement("script");
+        s.textContent = "window.agarioTriggerKey(" + charCode + ", \"" + eventName + "\");";
+        (document.head || document.documentElement).appendChild(s);
+        s.parentNode.removeChild(s);
+    }
 
-                window.dispatchEvent(event);
-            } + ")(" + charCode + ", \"" + eventName + "\")";
-            (document.head || document.documentElement).appendChild(s);
-            s.parentNode.removeChild(s);
-            console.log(s);
-        }
-        // End of tools
+    // Adds an agarioTriggerKey method to window
+    function addTriggerKeyFunction() {
+        var s = document.createElement("script");
+        s.textContent = "window.agarioTriggerKey = " + function(charCode, eventName) {
+            var event = document.createEvent("KeyboardEvents");
+            event.initKeyboardEvent(
+                eventName
+            );
+            var getterCode = {
+                get: function() {
+                    return charCode;
+                }
+            };
+            Object.defineProperties(event, {
+                keyCode: getterCode
+            });
+
+            window.dispatchEvent(event);
+        };
+        (document.head || document.documentElement).appendChild(s);
+        s.parentNode.removeChild(s);
+    }
+
+    // Removes the agarioTriggerKey method from window
+    function removeTriggerKeyFunction() {
+        window.agarioTriggerKey = null;
+    }
 
     // Current state of keys
     var keys = [];
@@ -175,7 +184,6 @@ console.log("AGARIOOOOO LOADED");
         if (key === undefined) {
             return;
         }
-        addLayer();
         addKey(key);
         resolve();
     }
@@ -287,7 +295,6 @@ console.log("AGARIOOOOO LOADED");
     // to avoid mousemove triggered by mouse
     function addLayer() {
         if (getLayer()) {
-            console.info("[Agario controls] Layer exists");
             return;
         }
         var layer = document.createElement("div");
@@ -480,6 +487,7 @@ console.log("AGARIOOOOO LOADED");
         disableW();
         disableSpace();
         disableContextMenu();
+        addTriggerKeyFunction();
     }
 
     // Stops the extension
@@ -489,6 +497,7 @@ console.log("AGARIOOOOO LOADED");
         enableW();
         enableSpace();
         enableContextMenu();
+        removeTriggerKeyFunction();
     }
 
     // Detects if the page is an agario client
@@ -532,7 +541,6 @@ console.log("AGARIOOOOO LOADED");
 
     // Start it baby!
     if (detectAgario()) {
-        console.log("AGARIOOOOOsss DETECTED");
         start();
     }
 })(window);
