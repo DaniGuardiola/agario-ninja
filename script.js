@@ -47,6 +47,9 @@
     // Last mouse position
     var lastMousePosition = "stop";
 
+    // True if mouse is enabled
+    var mouseEnabled = false;
+
     // Adds a key to the keys array or
     // moves it down if already included
     function addKey(key) {
@@ -339,9 +342,9 @@
             moveTo(lastMousePosition.x, lastMousePosition.y);
         }
         if (button === "left") {
-            fireWDown();
-        } else {
             fireSpaceDown();
+        } else {
+            fireWDown();
             event.preventDefault();
         }
     }
@@ -350,9 +353,9 @@
     function layerMouseUpListener(event) {
         var button = whichMouseButton(event.which);
         if (button === "left") {
-            fireWUp();
-        } else {
             fireSpaceUp();
+        } else {
+            fireWUp();
         }
         move(lastDirection);
     }
@@ -363,6 +366,9 @@
             x: event.clientX,
             y: event.clientY
         };
+        if (mouseEnabled) {
+            moveTo(lastMousePosition.x, lastMousePosition.y);
+        }
     }
 
     // Disables W action
@@ -384,10 +390,7 @@
         if (key === 87) {
             event.stopPropagation();
         }*/
-        if (key === 81) {
-            if (lastMousePosition) {
-                moveTo(lastMousePosition.x, lastMousePosition.y);
-            }
+        if (key === 80) {
             fireWDown();
         }
     }
@@ -399,9 +402,8 @@
         if (key === 87) {
             event.stopPropagation();
         }*/
-        if (key === 81) {
+        if (key === 80) {
             fireWUp();
-            move(lastDirection);
         }
     }
 
@@ -441,12 +443,10 @@
     function replaceSpaceDownListener(event) {
         var key = event.keyCode || event.which;
         if (key === 32) {
+            mouseEnabled = mouseEnabled ? false : true;
             event.stopPropagation();
         }
-        if (key === 69) {
-            if (lastMousePosition) {
-                moveTo(lastMousePosition.x, lastMousePosition.y);
-            }
+        if (key === 79) {
             fireSpaceDown();
         }
     }
@@ -457,9 +457,8 @@
         if (key === 32) {
             event.stopPropagation();
         }
-        if (key === 69) {
+        if (key === 79) {
             fireSpaceUp();
-            move(lastDirection);
         }
     }
 
