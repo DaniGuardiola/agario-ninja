@@ -8,6 +8,7 @@ Play Agar.io with advanced controls!
 Play like an MLG pro m8 and get to the top of the ranking.
 
 /* CONTROLS *\
+
 Move - WASD
 Split - O and left click
 Shoot mass - P and right click
