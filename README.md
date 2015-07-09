@@ -7,8 +7,7 @@ Play Agar.io with advanced controls!
 
 Play like an MLG pro m8 and get to the top of the ranking.
 
-/* CONTROLS *\
-
+# CONTROLS
 Move - WASD
 
 Split - O and left click
@@ -17,7 +16,7 @@ Shoot mass - P and right click
 
 Enable / disable mouse - Space
 
-/* NOTES *\
+# NOTES
 - When splitting or shooting using the O and P keys, it will aim to the direction your are moving.
 - When using the mouse buttons, it will aim to the cursor position.
 
@@ -28,7 +27,7 @@ Supports ANY agario client including:
 - Agarp.co
 - Anyone, really! ;)
 
-** CHANGELOG **
+# CHANGELOG
 1.0
 
 * Changed layout to WASD
