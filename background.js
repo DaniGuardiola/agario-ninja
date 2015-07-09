@@ -24,7 +24,7 @@ function openPopup(url) {
 }
 
 function checkVersion() {
-    var landingUrl = "http://agario.daniguardiola.me/#changes?installed=true";
+    var landingUrl = "http://agario.daniguardiola.me/?installed=true";
     var version = chrome.runtime.getManifest().version;
     var updatedUrl;
     chrome.storage.local.get("versionNumber", function(storage) {

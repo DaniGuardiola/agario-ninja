@@ -555,7 +555,7 @@
 
 // #2 fix
 (function() {
-    var style = '#extension-layer { position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; } ';
+    var style = '#extension-layer { cursor: crosshair; position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; } ';
     var s = document.createElement("style");
     s.innerHTML = style;
     document.getElementsByTagName("head")[0].appendChild(s);
