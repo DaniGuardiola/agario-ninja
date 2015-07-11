@@ -150,14 +150,76 @@
         getCanvas().dispatchEvent(ev);
     }
 
+    // MoveTo wrapper for coordinate objects
+    function moveToCoordinates(coordinates) {
+        moveTo(coordinates.x, coordinates.y);
+    }
+
     // Move the player based on direction
-    function move(direction) {
-        lastDirection = direction;
-        var co = coordinates(direction);
-        if (move === "stop") {
-            // Do something!
+    function move(direction, force) {
+        if (direction === lastDirection && !force) {
+            return;
         }
+        var co = coordinates(direction);
+        if (direction === "stop") {
+            moveStop(true);
+            lastDirection = direction;
+            return;
+        } else {
+            interruptMoveStop();
+        }
+        lastDirection = direction;
         moveTo(co.x, co.y);
+    }
+
+    // Define object for stop timeouts
+    var stopTimeout = false;
+
+    // True if it is stopping
+    var stopping = false;
+
+    // Last direction cached
+    var stoppingDirection = false;
+
+    // Current step on stopping movement
+    var stoppingStep;
+
+    // Interpolate two directions based on a step
+    function interpolateDirections(one, two, step) {
+        one = coordinates(one);
+        two = coordinates(two);
+        var output = {
+            x: ((two.x - one.x) * step) + one.x,
+            y: ((two.y - one.y) * step) + one.y
+        };
+        return output;
+    }
+
+    // Stops the blob
+    function moveStop(startIt) {
+        if (startIt) {
+            stopping = true;
+            stoppingStep = 0.5;
+            stoppingDirection = lastDirection;
+        }
+        if (!stopping) {
+            return;
+        }
+        if (stoppingStep <= 0) {
+            interruptMoveStop();
+            moveToCoordinates(coordinates("stop"));
+            return;
+        }
+        console.log("Stop at step " + stoppingStep);
+        moveToCoordinates(interpolateDirections(stoppingDirection, "stop", 1 - stoppingStep));
+        stoppingStep = stoppingStep - 0.04;
+        stopTimeout = setTimeout(moveStop, 1);
+    }
+
+    // Interrupts the stopping of the blob
+    function interruptMoveStop() {
+        clearTimeout(stopTimeout);
+        stopping = false;
     }
 
     // Returns the name of a key based on its number
@@ -357,7 +419,7 @@
         } else {
             fireWUp();
         }
-        move(lastDirection);
+        move(lastDirection, true);
     }
 
     // Layer on mousemove
@@ -537,6 +599,26 @@
         }, 3000);
     }
     */
+
+    // Debug mode
+    function debug() {
+        getCanvas().addEventListener("mousemove", function(event) {
+            var element = document.createElement("div");
+            element.style.position = "fixed";
+            element.style.width = element.style.height = "20px";
+            element.style.borderRadius = "50%";
+            element.style.backgroundColor = "red";
+            element.style.top = (event.clientY - 10) + "px";
+            element.style.left = (event.clientX - 10) + "px";
+            document.body.appendChild(element);
+            setTimeout(function() {
+                document.body.removeChild(element);
+            }, 400);
+        });
+    }
+
+    // Start debug mode (toggle comment to enable / disable)
+    // debug();
 
     // Start it baby!
     if (detectAgario()) {

@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Agario pro controls",
     "description": "WASD to move, mouse buttons to split and shoot and more!",
-    "version": "1.0",
+    "version": "1.0.1",
     "background": {
         "scripts": ["background.js"],
         "persistent": true
