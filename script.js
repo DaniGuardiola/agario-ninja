@@ -42,7 +42,7 @@
     var keys = [];
 
     // Last direction
-    var lastDirection = "stop";
+    var lastDirection = false;
 
     // Last mouse position
     var lastMousePosition = "stop";
@@ -549,6 +549,7 @@
         disableSpace();
         disableContextMenu();
         addTriggerKeyFunction();
+        move("stop");
     }
 
     // Stops the extension
