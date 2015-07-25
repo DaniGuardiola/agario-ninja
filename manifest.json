@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Agario pro controls",
+    "name": "Agar.io Pro Controls",
     "description": "WASD to move, mouse buttons to split and shoot and more!",
-    "version": "1.0.2",
+    "version": "1.1",
     "background": {
         "scripts": ["background.js"],
         "persistent": true

@@ -157,7 +157,7 @@
 
     // Move the player based on direction
     function move(direction, force) {
-        if (direction === lastDirection && !force) {
+        if ((direction === lastDirection || mouseEnabled) && !force) {
             return;
         }
         var co = coordinates(direction);
