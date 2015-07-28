@@ -8,3 +8,72 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+#extension-switch {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 500;
+}
+
+.material-switch {
+    height: 48px;
+    width: 48px;
+    display: block;
+    background-position: center;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    position: relative;
+}
+
+.material-switch[value~=on]:after {
+    left: 22px;
+    background-color: #009688;
+    width: 19px;
+    height: 19px;
+    top: 14px;
+}
+
+.material-switch[value~=on]:before {
+    background-color: #6DBDB6;
+}
+
+.material-switch:before {
+    content: "";
+    width: 32px;
+    border-radius: 50px;
+    height: 13px;
+    position: absolute;
+    top: 17px;
+    left: 8px;
+    -webkit-transition: background-color 0.25s;
+    -moz-transition: background-color 0.25s;
+    -o-transition: background-color 0.25s;
+    transition: background-color 0.25s;
+    will-change: background-color;
+}
+
+.material-switch:after {
+    content: "";
+    border-radius: 50%;
+    position: absolute;
+    -webkit-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s;
+    -moz-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s;
+    -o-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s;
+    transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s;
+    will-change: left, top, height, width, background-color;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.material-switch:not([value=on]):after {
+    left: 6px;
+    background-color: #fff;
+    width: 21px;
+    height: 21px;
+    top: 13px;
+}
+
+.material-switch:not([value=on]):before {
+    background-color: #929292;
+}

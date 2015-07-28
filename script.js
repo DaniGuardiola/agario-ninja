@@ -210,7 +210,6 @@
             moveToCoordinates(coordinates("stop"));
             return;
         }
-        console.log("Stop at step " + stoppingStep);
         moveToCoordinates(interpolateDirections(stoppingDirection, "stop", 1 - stoppingStep));
         stoppingStep = stoppingStep - 0.04;
         stopTimeout = setTimeout(moveStop, 1);
@@ -354,6 +353,36 @@
     function removeListeners() {
         document.removeEventListener("keydown", keyDownListener);
         document.removeEventListener("keyup", keyUpListener);
+    }
+
+    // Adds a switch to enable / disable the extension
+    function addSwitch() {
+        if (getSwitch()) {
+            return;
+        }
+        var switchEl = document.createElement("div");
+        switchEl.id = "extension-switch";
+        switchEl.setAttribute("value", "on");
+        switchEl.classList.add("material-switch");
+        switchEl.addEventListener("click", switchClickListener);
+        document.body.insertBefore(switchEl, document.body.children[0]);
+    }
+
+    // Gets the switch
+    function getSwitch() {
+        return document.getElementById("extension-switch");
+    }
+
+    // Switch on click
+    function switchClickListener() {
+        var switchEl = getSwitch();
+        if (switchEl.getAttribute("value") === "on") {
+            switchEl.setAttribute("value", "off");
+            stop();
+        } else {
+            switchEl.setAttribute("value", "on");
+            start();
+        }
     }
 
     // Adds a layer between the overlay and the canvas
@@ -623,6 +652,7 @@
 
     // Start it baby!
     if (detectAgario()) {
+        addSwitch();
         start();
     }
 })(window);
@@ -638,7 +668,7 @@
 
 // #2 fix
 (function() {
-    var style = '#extension-layer { cursor: crosshair; position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; } ';
+    var style = '#extension-layer { position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; } #extension-switch { position: fixed; top: 16px; left: 16px; z-index: 500; } .material-switch { height: 48px; width: 48px; display: block; background-position: center; background-size: 100% auto; background-repeat: no-repeat; cursor: pointer; position: relative; } .material-switch[value~=on]:after { left: 22px; background-color: #009688; width: 19px; height: 19px; top: 14px; } .material-switch[value~=on]:before { background-color: #6DBDB6; } .material-switch:before { content: ""; width: 32px; border-radius: 50px; height: 13px; position: absolute; top: 17px; left: 8px; -webkit-transition: background-color 0.25s; -moz-transition: background-color 0.25s; -o-transition: background-color 0.25s; transition: background-color 0.25s; will-change: background-color; } .material-switch:after { content: ""; border-radius: 50%; position: absolute; -webkit-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -moz-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -o-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; will-change: left, top, height, width, background-color; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); } .material-switch:not([value=on]):after { left: 6px; background-color: #fff; width: 21px; height: 21px; top: 13px; } .material-switch:not([value=on]):before { background-color: #929292; }';
     var s = document.createElement("style");
     s.innerHTML = style;
     document.getElementsByTagName("head")[0].appendChild(s);
