@@ -76,16 +76,11 @@
                 arrowKeys.push(key);
             }
         }
-        console.log("ADD!");
-        console.log("WASD: " + wasdKeys.join(", "));
-        console.log("Arrows: " + arrowKeys.join(", "));
         var index = keys.indexOf(key);
         if (index > -1) {
-            console.log("Keys (unaltered): " + keys.join(", "));
             return;
         }
         keys.push(key);
-        console.log("Keys: " + keys.join(", "));
     }
 
     // Removes a key from the keys array
@@ -104,12 +99,8 @@
                 arrowKeys.splice(index, 1);
             }
         }
-        console.log("REMOVE!");
-        console.log("WASD: " + wasdKeys.join(", "));
-        console.log("Arrows: " + arrowKeys.join(", "));
         // If exists on WASD or arrows, stop
         if ((wasdKeys.indexOf(key) > -1 || arrowKeys.indexOf(key) > -1) && !force) {
-            console.log("Keys (unaltered): " + keys.join(", "));
             return;
         }
         // Remove from keys
@@ -117,7 +108,6 @@
         if (index > -1) {
             keys.splice(index, 1);
         }
-        console.log("Keys: " + keys.join(", "));
     }
 
     // Get canvas
