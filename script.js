@@ -41,6 +41,15 @@
     // Current state of keys
     var keys = [];
 
+    // Current state of keyNumbers
+    var keyNumbers = [];
+
+    // WASD keys tracking
+    var wasdKeys = [];
+
+    // Arrow keys tracking
+    var arrowKeys = [];
+
     // Last direction
     var lastDirection = false;
 
@@ -52,17 +61,63 @@
 
     // Adds a key to the keys array or
     // moves it down if already included
-    function addKey(key) {
-        removeKey(key);
+    function addKey(key, is) {
+        removeKey(key, null, true);
+        if (is === "wasd") {
+            // Remove from WASD
+            index = wasdKeys.indexOf(key);
+            if (index < 0) {
+                wasdKeys.push(key);
+            }
+        } else if (is === "arrow") {
+            // Remove from WASD
+            index = arrowKeys.indexOf(key);
+            if (index < 0) {
+                arrowKeys.push(key);
+            }
+        }
+        console.log("ADD!");
+        console.log("WASD: " + wasdKeys.join(", "));
+        console.log("Arrows: " + arrowKeys.join(", "));
+        var index = keys.indexOf(key);
+        if (index > -1) {
+            console.log("Keys (unaltered): " + keys.join(", "));
+            return;
+        }
         keys.push(key);
+        console.log("Keys: " + keys.join(", "));
     }
 
     // Removes a key from the keys array
-    function removeKey(key) {
-        var index = keys.indexOf(key);
+    function removeKey(key, is, force) {
+        var index;
+        if (is === "wasd") {
+            // Remove from WASD
+            index = wasdKeys.indexOf(key);
+            if (index > -1) {
+                wasdKeys.splice(index, 1);
+            }
+        } else if (is === "arrow") {
+            // Remove from arrows
+            index = arrowKeys.indexOf(key);
+            if (index > -1) {
+                arrowKeys.splice(index, 1);
+            }
+        }
+        console.log("REMOVE!");
+        console.log("WASD: " + wasdKeys.join(", "));
+        console.log("Arrows: " + arrowKeys.join(", "));
+        // If exists on WASD or arrows, stop
+        if ((wasdKeys.indexOf(key) > -1 || arrowKeys.indexOf(key) > -1) && !force) {
+            console.log("Keys (unaltered): " + keys.join(", "));
+            return;
+        }
+        // Remove from keys
+        index = keys.indexOf(key);
         if (index > -1) {
             keys.splice(index, 1);
         }
+        console.log("Keys: " + keys.join(", "));
     }
 
     // Get canvas
@@ -224,11 +279,11 @@
     // Returns the name of a key based on its number
     function whichKey(number) {
         return ({
-            /* Arrows
+            // Arrows
             "37": "left",
             "38": "up",
             "39": "right",
-            "40": "down",*/
+            "40": "down",
             // WASD
             "65": "left",
             "87": "up",
@@ -240,30 +295,42 @@
     // Key down event listener
     function keyDownListener(event) {
         var key = event.keyCode || event.which;
+        var index = keyNumbers.indexOf(key);
+        if (index < 0) {
+            keyNumbers.push(key);
+        } else {
+            return;
+        }
         // Stopping W
         if (key === 87) {
             event.stopPropagation();
         }
+        var is = key < 50 ? "wasd" : "arrow";
         key = whichKey(key);
         if (key === undefined) {
             return;
         }
-        addKey(key);
+        addKey(key, is);
         resolve();
     }
 
     // Key up event listener
     function keyUpListener(event) {
         var key = event.keyCode || event.which;
+        var index = keyNumbers.indexOf(key);
+        if (index > -1) {
+            keyNumbers.splice(index, 1);
+        }
         // Stopping W
         if (key === 87) {
             event.stopPropagation();
         }
+        var is = key < 50 ? "wasd" : "arrow";
         key = whichKey(key);
         if (key === false) {
             return;
         }
-        removeKey(key);
+        removeKey(key, is);
         resolve();
     }
 
