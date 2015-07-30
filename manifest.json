@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Agar.io Pro Controls",
-    "description": "WASD to move, mouse buttons to split and shoot and more!",
-    "version": "1.4",
+    "name": "Agar.io Experience (Advanced controls, keyboard shortcuts...)",
+    "description": "WASD to move, mouse to aim, split and shoot, and (much) more!",
+    "version": "1.5",
     "background": {
         "scripts": ["background.js"],
         "persistent": true

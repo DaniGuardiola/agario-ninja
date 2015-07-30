@@ -282,9 +282,41 @@
         })[number];
     }
 
+    // Toggle checkbox
+    function toggleCheckbox(what) {
+        var checkbox = document.querySelector("[data-itr=\"" + what + "\"").previousElementSibling;
+        checkbox.checked = checkbox.checked ? false : true;
+        var ev = new Event("change");
+        checkbox.dispatchEvent(ev);
+        //checkbox.onchange();
+    }
+
+    // Option router
+    function routeOption(key) {
+        if (key === 67) { // C
+            toggleCheckbox("option_no_skins");
+        } else if (key === 86) { // V
+            toggleCheckbox("option_no_colors");
+        } else if (key === 66) { // B
+            toggleCheckbox("option_dark_theme");
+        } else if (key === 77) { // M
+            toggleCheckbox("option_show_mass");
+        } else if (key === 78) { // N
+            toggleCheckbox("option_no_names");
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     // Key down event listener
     function keyDownListener(event) {
         var key = event.keyCode || event.which;
+        if (event.target.tagName && event.target.tagName.toLowerCase() !== "input") {
+            if (routeOption(key)) {
+                return;
+            }
+        }
         var index = keyNumbers.indexOf(key);
         if (index < 0) {
             keyNumbers.push(key);
