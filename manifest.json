@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-    "name": "Agar.io Ninja (Advanced controls, keyboard shortcuts...)",
+    "name": "Agar.io Ninja (Advanced controls and more)",
     "description": "WASD to move, mouse to aim, split and shoot, and (much) more!",
     "version": "1.5",
     "background": {
