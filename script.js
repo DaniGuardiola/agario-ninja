@@ -398,7 +398,7 @@
                 } else if (second === "right") {
                     direction = "up-right";
                 } else {
-                    direction = false;
+                    direction = "up";
                 }
                 break;
             case "right":
@@ -407,7 +407,7 @@
                 } else if (second === "down") {
                     direction = "down-right";
                 } else {
-                    direction = false;
+                    direction = "right";
                 }
                 break;
             case "down":
@@ -416,7 +416,7 @@
                 } else if (second === "left") {
                     direction = "down-left";
                 } else {
-                    direction = false;
+                    direction = "down";
                 }
                 break;
             case "left":
@@ -425,7 +425,7 @@
                 } else if (second === "up") {
                     direction = "up-left";
                 } else {
-                    direction = false;
+                    direction = "left";
                 }
                 break;
         }
@@ -449,12 +449,18 @@
         if (getSwitch()) {
             return;
         }
-        var switchEl = document.createElement("div");
-        switchEl.id = "extension-switch";
-        switchEl.setAttribute("value", "on");
-        switchEl.classList.add("material-switch");
-        switchEl.addEventListener("click", switchClickListener);
-        document.body.insertBefore(switchEl, document.body.children[0]);
+        chrome.storage.local.get("on", function(storage) {
+            var on = storage.on;
+            var switchEl = document.createElement("div");
+            switchEl.id = "extension-switch";
+            switchEl.classList.add("material-switch");
+            switchEl.addEventListener("click", switchClickListener);
+            document.body.insertBefore(switchEl, document.body.children[0]);
+            if (on === "true") {
+                switchEl.setAttribute("value", "on");
+                start();
+            }
+        });
     }
 
     // Gets the switch
@@ -467,10 +473,16 @@
         var switchEl = getSwitch();
         if (switchEl.getAttribute("value") === "on") {
             switchEl.setAttribute("value", "off");
+            chrome.storage.local.set({
+                "on": "false"
+            });
             stop();
         } else {
             switchEl.setAttribute("value", "on");
             start();
+            chrome.storage.local.set({
+                "on": "true"
+            });
         }
     }
 
@@ -742,7 +754,6 @@
     // Start it baby!
     if (detectAgario()) {
         addSwitch();
-        start();
     }
 })(window);
 
