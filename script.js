@@ -288,7 +288,43 @@
         checkbox.checked = checkbox.checked ? false : true;
         var ev = new Event("change");
         checkbox.dispatchEvent(ev);
-        //checkbox.onchange();
+    }
+
+    // Checkbox change listener add
+    function addCheckboxChange() {
+        var checkboxes = document.querySelectorAll("#options input[type=\"checkbox\"");
+        for (var i = checkboxes.length - 1; i >= 0; i--) {
+            checkboxChange(checkboxes[i]);
+            checkboxes[i].addEventListener("change", checkboxChange);
+        }
+    }
+
+    // Checkbox change listener add
+    function removeCheckboxChange() {
+        var checkboxes = document.querySelectorAll("#options input[type=\"checkbox\"");
+        for (var i = checkboxes.length - 1; i >= 0; i--) {
+            checkboxes[i].removeEventListener("change", checkboxChange);
+        }
+    }
+
+    // Checkbox change listener
+    function checkboxChange(event) {
+        var checkbox, id;
+        // Check if event parameter is element
+        if (event.nodeType) {
+            checkbox = event;
+        } else {
+            checkbox = event.currentTarget;
+        }
+        id = checkbox.nextElementSibling.getAttribute("data-itr");
+
+        if (id === "option_dark_theme") {
+            if (checkbox.checked) {
+                document.body.classList.add("dark");
+            } else {
+                document.body.classList.remove("dark");
+            }
+        }
     }
 
     // Option router
@@ -674,6 +710,7 @@
     // Starts the extension
     function start() {
         addListeners();
+        addCheckboxChange();
         addLayer();
         disableW();
         disableSpace();
@@ -685,6 +722,7 @@
     // Stops the extension
     function stop() {
         removeListeners();
+        removeCheckboxChange();
         removeLayer();
         enableW();
         enableSpace();
@@ -768,7 +806,7 @@
 
 // #2 fix
 (function() {
-    var style = '#extension-layer { position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABEVBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///9o4Z9eAAAAWXRSTlMAAxVIlt7mr1IYBQk/sfj6/vvPVBABFGrx/e/yihvksm88nI1lxFAEg8E6uDAnqfcGDqL8zivudHn5zFW09pjYZz6GItKrHbsq5XhZ6AvROce/Sgpo8JcCDDLDbjEAAAABYktHRFoDu6WiAAABYklEQVQoz3WSC1OCQBSFr5SQobKbLxbIV6ZokiWKopJlWWllpWXd//9HWqQpc/LMzuzs+XbP3ReAr5CwsxtGLlHai+zDj+RoLK4QHxAaP0gkU4GdSmdUhlQTdV3UKBLVOAxI2uB2NpcvFIuFfC5LkR2tiFzSUTkuVwBME6BSrsaRGUletyaiclL3l/oAwDptoJo4g/Omja2V/w3AqtrkIAJtB50OrAMoZ7GxB10Xe0Jg9PtBX8lRKsHA9i5gQ3mNiDAkzuUmuBIRQUFPMk1zxGOur3nciA+KOgfqNnCzLWpM/y0ehk4cW7cb272zlV24n6A2/XvAh0f0duDJsMnseR3UXxiLCZCyZkhfn39B/URBNRriiXN+7bPpbQCETstFlpH9KYs3Hdl7a1mSpNKypzHUjXRQbDGfMSSe4/FGkIml9PejQ8gyJi7lv4HYrtOsyb8n+ljcd8Y3qjIcdNufoZX1BZNnPVts0zcsAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE0LTAyLTAyVDE3OjEzOjE4KzA4OjAwJfgKpgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNC0wMi0wMlQxNzoxMzoxOCswODowMFSlshoAAAAASUVORK5CYII=) -12 -12, crosshair; } #extension-switch { position: fixed; top: 16px; left: 16px; z-index: 500; } .material-switch { height: 48px; width: 48px; display: block; background-position: center; background-size: 100% auto; background-repeat: no-repeat; cursor: pointer; position: relative; } .material-switch[value~=on]:after { left: 22px; background-color: #009688; width: 19px; height: 19px; top: 14px; } .material-switch[value~=on]:before { background-color: #6DBDB6; } .material-switch:before { content: ""; width: 32px; border-radius: 50px; height: 13px; position: absolute; top: 17px; left: 8px; -webkit-transition: background-color 0.25s; -moz-transition: background-color 0.25s; -o-transition: background-color 0.25s; transition: background-color 0.25s; will-change: background-color; } .material-switch:after { content: ""; border-radius: 50%; position: absolute; -webkit-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -moz-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -o-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; will-change: left, top, height, width, background-color; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); } .material-switch:not([value=on]):after { left: 6px; background-color: #fff; width: 21px; height: 21px; top: 13px; } .material-switch:not([value=on]):before { background-color: #929292; }';
+    var style = '#extension-layer { position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABEVBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///9o4Z9eAAAAWXRSTlMAAxVIlt7mr1IYBQk/sfj6/vvPVBABFGrx/e/yihvksm88nI1lxFAEg8E6uDAnqfcGDqL8zivudHn5zFW09pjYZz6GItKrHbsq5XhZ6AvROce/Sgpo8JcCDDLDbjEAAAABYktHRFoDu6WiAAABYklEQVQoz3WSC1OCQBSFr5SQobKbLxbIV6ZokiWKopJlWWllpWXd//9HWqQpc/LMzuzs+XbP3ReAr5CwsxtGLlHai+zDj+RoLK4QHxAaP0gkU4GdSmdUhlQTdV3UKBLVOAxI2uB2NpcvFIuFfC5LkR2tiFzSUTkuVwBME6BSrsaRGUletyaiclL3l/oAwDptoJo4g/Omja2V/w3AqtrkIAJtB50OrAMoZ7GxB10Xe0Jg9PtBX8lRKsHA9i5gQ3mNiDAkzuUmuBIRQUFPMk1zxGOur3nciA+KOgfqNnCzLWpM/y0ehk4cW7cb272zlV24n6A2/XvAh0f0duDJsMnseR3UXxiLCZCyZkhfn39B/URBNRriiXN+7bPpbQCETstFlpH9KYs3Hdl7a1mSpNKypzHUjXRQbDGfMSSe4/FGkIml9PejQ8gyJi7lv4HYrtOsyb8n+ljcd8Y3qjIcdNufoZX1BZNnPVts0zcsAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE0LTAyLTAyVDE3OjEzOjE4KzA4OjAwJfgKpgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNC0wMi0wMlQxNzoxMzoxOCswODowMFSlshoAAAAASUVORK5CYII=) -12 -12, crosshair; } body.dark #extension-layer { cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAABDlBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///9x76OvAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQffCQIJGzeW//u6AAAAXUlEQVQoz41SgQkAIAjzzf5/JCiHM7ZqUJkzcVpEYiSiYxCcnyjc9iIGJnYwZBxxeFrnsjhl5W5EKzKEqB2s/CCEqAfhU0nClnsVqFtim6jafkyqVJnR/nwGnnxiAt/EVS74izmBAAAAAElFTkSuQmCC) -12 -12, crosshair; } #extension-switch { position: fixed; top: 16px; left: 16px; z-index: 500; } .material-switch { height: 48px; width: 48px; display: block; background-position: center; background-size: 100% auto; background-repeat: no-repeat; cursor: pointer; position: relative; } .material-switch[value~=on]:after { left: 22px; background-color: #009688; width: 19px; height: 19px; top: 14px; } .material-switch[value~=on]:before { background-color: #6DBDB6; } .material-switch:before { content: ""; width: 32px; border-radius: 50px; height: 13px; position: absolute; top: 17px; left: 8px; -webkit-transition: background-color 0.25s; -moz-transition: background-color 0.25s; -o-transition: background-color 0.25s; transition: background-color 0.25s; will-change: background-color; } .material-switch:after { content: ""; border-radius: 50%; position: absolute; -webkit-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -moz-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -o-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; will-change: left, top, height, width, background-color; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); } .material-switch:not([value=on]):after { left: 6px; background-color: #fff; width: 21px; height: 21px; top: 13px; } .material-switch:not([value=on]):before { background-color: #929292; }';
     var s = document.createElement("style");
     s.innerHTML = style;
     document.getElementsByTagName("head")[0].appendChild(s);
