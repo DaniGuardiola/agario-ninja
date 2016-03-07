@@ -84,6 +84,7 @@ body.dark #extension-layer {
 }
 
 #ninja-help {
+    font-family: "Candal";
     position: fixed;
     top: 14px;
     left: 76px;
@@ -91,4 +92,36 @@ body.dark #extension-layer {
     color: white;
     background: rgba(0, 0, 0, 0.5);
     z-index: 9999;
+}
+
+#ninja-logo {
+    position: fixed;
+    left: 80px;
+    font-size: 33px;
+    line-height: 33px;
+    animation-name: rainbow;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    top: 14px;
+    padding: 8px;
+    background-color: hsla(0, 100%, 100%, 0.53);
+    border-radius: 24px;
+}
+
+@keyframes rainbow {
+    0% {
+        color: #9C27B0;
+    }
+    20% {
+        color: #3F51B5;
+    }
+    40% {
+        color: #009688;
+    }
+    60% {
+        color: #8BC34A;
+    }
+    100% {
+        color: #FF5722;
+    }
 }

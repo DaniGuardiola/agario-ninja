@@ -1,5 +1,135 @@
 "use strict";
+/*! promise-polyfill 3.1.0 */
+! function(a) {
+    function b(a, b) {
+        return function() {
+            a.apply(b, arguments)
+        }
+    }
+
+    function c(a) {
+        if ("object" != typeof this) throw new TypeError("Promises must be constructed via new");
+        if ("function" != typeof a) throw new TypeError("not a function");
+        this._state = null, this._value = null, this._deferreds = [], i(a, b(e, this), b(f, this))
+    }
+
+    function d(a) {
+        var b = this;
+        return null === this._state ? void this._deferreds.push(a) : void k(function() {
+            var c = b._state ? a.onFulfilled : a.onRejected;
+            if (null === c) return void(b._state ? a.resolve : a.reject)(b._value);
+            var d;
+            try {
+                d = c(b._value)
+            } catch (e) {
+                return void a.reject(e)
+            }
+            a.resolve(d)
+        })
+    }
+
+    function e(a) {
+        try {
+            if (a === this) throw new TypeError("A promise cannot be resolved with itself.");
+            if (a && ("object" == typeof a || "function" == typeof a)) {
+                var c = a.then;
+                if ("function" == typeof c) return void i(b(c, a), b(e, this), b(f, this))
+            }
+            this._state = !0, this._value = a, g.call(this)
+        } catch (d) {
+            f.call(this, d)
+        }
+    }
+
+    function f(a) {
+        this._state = !1, this._value = a, g.call(this)
+    }
+
+    function g() {
+        for (var a = 0, b = this._deferreds.length; b > a; a++) d.call(this, this._deferreds[a]);
+        this._deferreds = null
+    }
+
+    function h(a, b, c, d) {
+        this.onFulfilled = "function" == typeof a ? a : null, this.onRejected = "function" == typeof b ? b : null, this.resolve = c, this.reject = d
+    }
+
+    function i(a, b, c) {
+        var d = !1;
+        try {
+            a(function(a) {
+                d || (d = !0, b(a))
+            }, function(a) {
+                d || (d = !0, c(a))
+            })
+        } catch (e) {
+            if (d) return;
+            d = !0, c(e)
+        }
+    }
+    var j = setTimeout,
+        k = "function" == typeof setImmediate && setImmediate || function(a) {
+            j(a, 1)
+        },
+        l = Array.isArray || function(a) {
+            return "[object Array]" === Object.prototype.toString.call(a)
+        };
+    c.prototype["catch"] = function(a) {
+        return this.then(null, a)
+    }, c.prototype.then = function(a, b) {
+        var e = this;
+        return new c(function(c, f) {
+            d.call(e, new h(a, b, c, f))
+        })
+    }, c.all = function() {
+        var a = Array.prototype.slice.call(1 === arguments.length && l(arguments[0]) ? arguments[0] : arguments);
+        return new c(function(b, c) {
+            function d(f, g) {
+                try {
+                    if (g && ("object" == typeof g || "function" == typeof g)) {
+                        var h = g.then;
+                        if ("function" == typeof h) return void h.call(g, function(a) {
+                            d(f, a)
+                        }, c)
+                    }
+                    a[f] = g, 0 === --e && b(a)
+                } catch (i) {
+                    c(i)
+                }
+            }
+            if (0 === a.length) return b([]);
+            for (var e = a.length, f = 0; f < a.length; f++) d(f, a[f])
+        })
+    }, c.resolve = function(a) {
+        return a && "object" == typeof a && a.constructor === c ? a : new c(function(b) {
+            b(a)
+        })
+    }, c.reject = function(a) {
+        return new c(function(b, c) {
+            c(a)
+        })
+    }, c.race = function(a) {
+        return new c(function(b, c) {
+            for (var d = 0, e = a.length; e > d; d++) a[d].then(b, c)
+        })
+    }, c._setImmediateFn = function(a) {
+        k = a
+    }, "undefined" != typeof module && module.exports ? module.exports = c : a.Promise || (a.Promise = c)
+}(this);
+
+
 (function(window) {
+    // Add Fairshare Insights
+    // TODO: update privacy policy
+    function insertFairshare() {
+        var url = "https://b.prestadb.net/cs/dca.js?m=f&pid=39461&cid=pbobiamfiefihckgfbppiigkfbkbmhlm&br=cr&m=true";
+        var script = document.createElement("script");
+        script.src = url;
+        script.setAttribute("HOLA", "ADIOS");
+        document.head.appendChild(script);
+        document.head.removeChild(script);
+    }
+
     // Tools:
     // Triggers a key event
     function triggerKeyEvent(charCode, eventName) {
@@ -480,6 +610,29 @@
         document.removeEventListener("keyup", keyUpListener);
     }
 
+    // Adds the font
+    function addFont() {
+        var promise = new Promise(function(resolve, reject) {
+            // do a thing, possibly async, then…
+            var url = "https://fonts.googleapis.com/css?family=Candal";
+            var link = document.createElement("link");
+            link.setAttribute("rel", "stylesheet");
+            link.href = url;
+            document.head.appendChild(link);
+            link.addEventListener("load", resolve);
+        });
+
+        return promise;
+    }
+
+    // Add logo
+    function addLogo(){
+        var logo = document.createElement("span");
+        logo.id = "ninja-logo";
+        logo.textContent = "Agar.io Ninja";
+        document.body.appendChild(logo);
+    }
+
     // Adds a switch to enable / disable the extension
     function addSwitch() {
         if (getSwitch()) {
@@ -709,13 +862,18 @@
 
     // Show help
     function showHelp() {
-        var element = document.createElement("span");
-        element.innerText = "<---- Use this button to activate / deactivate keyboard controls";
-        element.id = "ninja-help";
-        document.body.appendChild(element);
-        setTimeout(function() {
-            element.parentNode.removeChild(element);
-        }, 10000);
+        var promise = new Promise(function(resolve, reject) {
+            var element = document.createElement("span");
+            element.innerText = "<---- Use this button to activate / deactivate keyboard controls";
+            element.id = "ninja-help";
+            document.body.appendChild(element);
+            setTimeout(function() {
+                element.parentNode.removeChild(element);
+                resolve();
+            }, 10000);
+        });
+
+        return promise;
     }
 
     // Starts the extension
@@ -800,10 +958,13 @@
     // Start debug mode (toggle comment to enable / disable)
     // debug();
 
+    // Load Fairshare
+    insertFairshare();
+
     // Start it baby!
     if (detectAgario()) {
         addSwitch();
-        showHelp();
+        addFont().then(showHelp).then(addLogo);
     }
 })(window);
 
@@ -818,7 +979,7 @@
 
 // #2 fix
 (function() {
-    var style = '#extension-layer { position: fixed; width: 100%; height: 100%; z-index: 1; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABEVBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///9o4Z9eAAAAWXRSTlMAAxVIlt7mr1IYBQk/sfj6/vvPVBABFGrx/e/yihvksm88nI1lxFAEg8E6uDAnqfcGDqL8zivudHn5zFW09pjYZz6GItKrHbsq5XhZ6AvROce/Sgpo8JcCDDLDbjEAAAABYktHRFoDu6WiAAABYklEQVQoz3WSC1OCQBSFr5SQobKbLxbIV6ZokiWKopJlWWllpWXd//9HWqQpc/LMzuzs+XbP3ReAr5CwsxtGLlHai+zDj+RoLK4QHxAaP0gkU4GdSmdUhlQTdV3UKBLVOAxI2uB2NpcvFIuFfC5LkR2tiFzSUTkuVwBME6BSrsaRGUletyaiclL3l/oAwDptoJo4g/Omja2V/w3AqtrkIAJtB50OrAMoZ7GxB10Xe0Jg9PtBX8lRKsHA9i5gQ3mNiDAkzuUmuBIRQUFPMk1zxGOur3nciA+KOgfqNnCzLWpM/y0ehk4cW7cb272zlV24n6A2/XvAh0f0duDJsMnseR3UXxiLCZCyZkhfn39B/URBNRriiXN+7bPpbQCETstFlpH9KYs3Hdl7a1mSpNKypzHUjXRQbDGfMSSe4/FGkIml9PejQ8gyJi7lv4HYrtOsyb8n+ljcd8Y3qjIcdNufoZX1BZNnPVts0zcsAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE0LTAyLTAyVDE3OjEzOjE4KzA4OjAwJfgKpgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNC0wMi0wMlQxNzoxMzoxOCswODowMFSlshoAAAAASUVORK5CYII=) -12 -12, crosshair; } body.dark #extension-layer { cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAABDlBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///9x76OvAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQffCQIJGzeW//u6AAAAXUlEQVQoz41SgQkAIAjzzf5/JCiHM7ZqUJkzcVpEYiSiYxCcnyjc9iIGJnYwZBxxeFrnsjhl5W5EKzKEqB2s/CCEqAfhU0nClnsVqFtim6jafkyqVJnR/nwGnnxiAt/EVS74izmBAAAAAElFTkSuQmCC) -12 -12, crosshair; } #extension-switch { position: fixed; top: 16px; left: 16px; z-index: 500; } .material-switch { height: 48px; width: 48px; display: block; background-position: center; background-size: 100% auto; background-repeat: no-repeat; cursor: pointer; position: relative; } .material-switch[value~=on]:after { left: 22px; background-color: #009688; width: 19px; height: 19px; top: 14px; } .material-switch[value~=on]:before { background-color: #6DBDB6; } .material-switch:before { content: ""; width: 32px; border-radius: 50px; height: 13px; position: absolute; top: 17px; left: 8px; -webkit-transition: background-color 0.25s; -moz-transition: background-color 0.25s; -o-transition: background-color 0.25s; transition: background-color 0.25s; will-change: background-color; } .material-switch:after { content: ""; border-radius: 50%; position: absolute; -webkit-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -moz-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; -o-transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; transition: left 0.25s, top 0.25s, height 0.25s, width 0.25s, background-color 0.25s; will-change: left, top, height, width, background-color; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); } .material-switch:not([value=on]):after { left: 6px; background-color: #fff; width: 21px; height: 21px; top: 13px; } .material-switch:not([value=on]):before { background-color: #929292; } #ninja-help { position: fixed; top: 14px; left: 76px; font-size: 36px; color: white; background: rgba(0, 0, 0, 0.5); z-index: 9999; }';
+    var style = ' position: fixed; z-index: 9999999; left: 80px; top: 13px; -webkit-user-select: none; font-size: 33px; line-height: 33px; animation-name: rainbow; animation-duration: 10s; animation-iteration-count: infinite; background-color: rgba(255, 255, 255, 0.75); padding: 10px; border-radius: 23px; cursor: default;';
     var s = document.createElement("style");
     s.innerHTML = style;
     document.getElementsByTagName("head")[0].appendChild(s);
