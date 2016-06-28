@@ -106,6 +106,9 @@ body.dark #extension-layer {
     padding: 8px;
     background-color: hsla(0, 100%, 100%, 0.53);
     border-radius: 24px;
+    z-index: 500;
+    -webkit-user-select: none;
+    cursor: default;
 }
 
 @keyframes rainbow {

@@ -1,28 +1,32 @@
 window.addEventListener("load", init);
 
-/*
-chrome.webRequest.onBeforeRequest.addListener(
-    function(details) {
-        console.log(details.url);
-        if (details.url == "http://agar.io/main_out.js?555")
-            return {
-                redirectUrl: "http://wikilist.daniguardiola.me/agario.js"
-            };
-    }, {
-        urls: ["<all_urls>"]
-    }, ["blocking"]);
-*/
-
 function init() {
     checkVersion();
 }
 
+/**
+
+    Open a popup with url
+
+*/
 function openPopup(url) {
     chrome.tabs.create({
         "url": url
     });
 }
 
+/**
+
+    Check the extension version.
+
+    - If it has just been installed, open the landing page in a new tab.
+    - If it has been updated, open the changelog page in a new tab
+    - If it has not been updated, do nothing.
+
+    This opens a popup with relevant information on extension install and update.
+    The updates are every two months in average.
+
+*/
 function checkVersion() {
     var landingUrl = "http://agario.daniguardiola.me/?installed=true";
     var version = chrome.runtime.getManifest().version;

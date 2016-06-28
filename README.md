@@ -1,6 +1,6 @@
-# Agar.io keyboard controls
+# Agar.io Ninja
 
-[![Available on Chrome Webstore](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_496x150.png)](https://chrome.google.com/webstore/detail/agario-pro-controls/pbobiamfiefihckgfbppiigkfbkbmhlm)
+[![Available on the Chrome Webstore](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_496x150.png)](https://chrome.google.com/webstore/detail/agario-pro-controls/pbobiamfiefihckgfbppiigkfbkbmhlm)
 
 WASD to move, mouse buttons to split and shoot and more!
 Play Agar.io with advanced controls!

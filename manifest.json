@@ -1,23 +1,23 @@
 {
     "manifest_version": 2,
-    "name": "Agar.io Ninja (Advanced controls and more)",
+    "name": "Agar.io Ninja (WASD and more)",
     "description": "WASD to move, mouse to aim, split and shoot, and (much) more!",
-    "version": "1.5.2.1",
+    "version": "1.5.4",
     "background": {
         "scripts": ["background.js"],
         "persistent": true
     },
     "icons": {
-        "16": "logo/agario_16.png",
-        "32": "logo/agario_32.png",
-        "48": "logo/agario_48.png",
-        "64": "logo/agario_64.png",
-        "72": "logo/agario_72.png",
-        "96": "logo/agario_96.png",
-        "128": "logo/agario_128.png",
-        "144": "logo/agario_144.png",
-        "192": "logo/agario_192.png",
-        "512": "logo/agario_512.png"
+        "16": "logo/16.png",
+        "32": "logo/32.png",
+        "48": "logo/48.png",
+        "64": "logo/64.png",
+        "72": "logo/72.png",
+        "96": "logo/96.png",
+        "128": "logo/128.png",
+        "144": "logo/144.png",
+        "192": "logo/192.png",
+        "512": "logo/512.png"
     },
     "content_scripts": [{
         "matches": [

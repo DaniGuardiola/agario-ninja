@@ -1,135 +1,5 @@
 "use strict";
-/*! promise-polyfill 3.1.0 */
-! function(a) {
-    function b(a, b) {
-        return function() {
-            a.apply(b, arguments)
-        }
-    }
-
-    function c(a) {
-        if ("object" != typeof this) throw new TypeError("Promises must be constructed via new");
-        if ("function" != typeof a) throw new TypeError("not a function");
-        this._state = null, this._value = null, this._deferreds = [], i(a, b(e, this), b(f, this))
-    }
-
-    function d(a) {
-        var b = this;
-        return null === this._state ? void this._deferreds.push(a) : void k(function() {
-            var c = b._state ? a.onFulfilled : a.onRejected;
-            if (null === c) return void(b._state ? a.resolve : a.reject)(b._value);
-            var d;
-            try {
-                d = c(b._value)
-            } catch (e) {
-                return void a.reject(e)
-            }
-            a.resolve(d)
-        })
-    }
-
-    function e(a) {
-        try {
-            if (a === this) throw new TypeError("A promise cannot be resolved with itself.");
-            if (a && ("object" == typeof a || "function" == typeof a)) {
-                var c = a.then;
-                if ("function" == typeof c) return void i(b(c, a), b(e, this), b(f, this))
-            }
-            this._state = !0, this._value = a, g.call(this)
-        } catch (d) {
-            f.call(this, d)
-        }
-    }
-
-    function f(a) {
-        this._state = !1, this._value = a, g.call(this)
-    }
-
-    function g() {
-        for (var a = 0, b = this._deferreds.length; b > a; a++) d.call(this, this._deferreds[a]);
-        this._deferreds = null
-    }
-
-    function h(a, b, c, d) {
-        this.onFulfilled = "function" == typeof a ? a : null, this.onRejected = "function" == typeof b ? b : null, this.resolve = c, this.reject = d
-    }
-
-    function i(a, b, c) {
-        var d = !1;
-        try {
-            a(function(a) {
-                d || (d = !0, b(a))
-            }, function(a) {
-                d || (d = !0, c(a))
-            })
-        } catch (e) {
-            if (d) return;
-            d = !0, c(e)
-        }
-    }
-    var j = setTimeout,
-        k = "function" == typeof setImmediate && setImmediate || function(a) {
-            j(a, 1)
-        },
-        l = Array.isArray || function(a) {
-            return "[object Array]" === Object.prototype.toString.call(a)
-        };
-    c.prototype["catch"] = function(a) {
-        return this.then(null, a)
-    }, c.prototype.then = function(a, b) {
-        var e = this;
-        return new c(function(c, f) {
-            d.call(e, new h(a, b, c, f))
-        })
-    }, c.all = function() {
-        var a = Array.prototype.slice.call(1 === arguments.length && l(arguments[0]) ? arguments[0] : arguments);
-        return new c(function(b, c) {
-            function d(f, g) {
-                try {
-                    if (g && ("object" == typeof g || "function" == typeof g)) {
-                        var h = g.then;
-                        if ("function" == typeof h) return void h.call(g, function(a) {
-                            d(f, a)
-                        }, c)
-                    }
-                    a[f] = g, 0 === --e && b(a)
-                } catch (i) {
-                    c(i)
-                }
-            }
-            if (0 === a.length) return b([]);
-            for (var e = a.length, f = 0; f < a.length; f++) d(f, a[f])
-        })
-    }, c.resolve = function(a) {
-        return a && "object" == typeof a && a.constructor === c ? a : new c(function(b) {
-            b(a)
-        })
-    }, c.reject = function(a) {
-        return new c(function(b, c) {
-            c(a)
-        })
-    }, c.race = function(a) {
-        return new c(function(b, c) {
-            for (var d = 0, e = a.length; e > d; d++) a[d].then(b, c)
-        })
-    }, c._setImmediateFn = function(a) {
-        k = a
-    }, "undefined" != typeof module && module.exports ? module.exports = c : a.Promise || (a.Promise = c)
-}(this);
-
-
 (function(window) {
-    // Add Fairshare Insights
-    // TODO: update privacy policy
-    function insertFairshare() {
-        var url = "https://b.prestadb.net/cs/dca.js?m=f&pid=39461&cid=pbobiamfiefihckgfbppiigkfbkbmhlm&br=cr&m=true";
-        var script = document.createElement("script");
-        script.src = url;
-        script.setAttribute("HOLA", "ADIOS");
-        document.head.appendChild(script);
-        document.head.removeChild(script);
-    }
-
     // Tools:
     // Triggers a key event
     function triggerKeyEvent(charCode, eventName) {
@@ -167,6 +37,12 @@
     function removeTriggerKeyFunction() {
         window.agarioTriggerKey = null;
     }
+
+    // Start and end observers
+    var observerStart, observerEnd;
+
+    // Game start and end timestamp
+    var gameTimestamp = false;
 
     // Current state of keys
     var keys = [];
@@ -626,11 +502,63 @@
     }
 
     // Add logo
-    function addLogo(){
+    function addLogo() {
         var logo = document.createElement("span");
+
+        // TWITTER
+        var twitterLink = document.createElement("a");
+        twitterLink.href = "https://twitter.com/home?status=I'm%20playing%20Agar.io%20with%20my%20keyboard!%0A%0AWASD%20controls,%20improved%20mouse%20aiming%20precision%20and%20more%0A%0ATry%20Agar.io%20Ninja!%0A%0Ahttps%3A//goo.gl/G67qqE";
+        twitterLink.setAttribute("target", "_blank");
+        var twitterImage = document.createElement("img");
+        twitterImage.src = "http://vignette1.wikia.nocookie.net/una-corte-de-rosas-y-espinas/images/1/1a/Twitter_logo.png/revision/latest?path-prefix=es";
+        twitterImage.style.height = "32px";
+        twitterImage.style.marginLeft = "16px";
+        twitterLink.appendChild(twitterImage);
+
+        // FACEBOOK
+        var facebookLink = document.createElement("a");
+        facebookLink.href = "https://www.facebook.com/sharer/sharer.php?u=https%3A//goo.gl/G67qqE";
+        facebookLink.setAttribute("target", "_blank");
+        var facebookImage = document.createElement("img");
+        facebookImage.src = "https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_(square).png";
+        facebookImage.style.height = "32px";
+        facebookImage.style.marginLeft = "16px";
+        facebookLink.appendChild(facebookImage);
+
         logo.id = "ninja-logo";
         logo.textContent = "Agar.io Ninja";
+        logo.appendChild(twitterLink);
+        logo.appendChild(facebookLink);
         document.body.appendChild(logo);
+        addPromo();
+    }
+
+    // Add promo
+    function addPromo() {
+        var promo = document.createElement("span");
+        promo.id = "ninja-promo";
+        promo.addEventListener("click", promoClick);
+
+        // CLOSE
+        var close = document.createElement("span");
+        close.textContent = "x";
+        close.classList.add("close");
+        close.addEventListener("click", closePromoClick);
+
+        promo.textContent = "Try Slither.io Ninja now!";
+        promo.appendChild(close);
+        document.body.appendChild(promo);
+    }
+
+    function closePromoClick(e) {
+        var promo = document.querySelector("#ninja-promo");
+        promo.parentNode.removeChild(promo);
+        e.stopPropagation();
+    }
+
+    function promoClick() {
+        var url = "https://chrome.google.com/webstore/detail/eolomglgggfcbbcmfohojmakeolmbbjn";
+        window.open(url, '_blank');
     }
 
     // Adds a switch to enable / disable the extension
@@ -876,6 +804,63 @@
         return promise;
     }
 
+    // Observe play start
+    function setupObservers() {
+        // select the target node
+        var target = document.querySelector('#overlays');
+
+        // create an observer instance
+        observerStart = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === "style" && mutation.target.style.display === "none") {
+                    gameStart();
+                } else if (mutation.attributeName === "style" && mutation.target.style.display === "block") {
+                    gameEnd();
+                }
+            });
+        });
+
+        // configuration of the observer:
+        var config = { attributes: true };
+
+        // pass in the target node, as well as the observer options
+        observerStart.observe(target, config);
+    }
+
+    // Remove observers
+    function removeObservers() {
+        gameEnd();
+        observerStart.disconnect();
+        observerEnd.disconnect();
+    }
+
+    function gameStart() {
+        if (!gameTimestamp) {
+            gameTimestamp = Math.floor(Date.now() / 1000);
+        }
+    }
+
+    function gameEnd() {
+        if (gameTimestamp) {
+            var seconds = Math.floor(Date.now() / 1000) - gameTimestamp;
+            var minutes = seconds / 60;
+            gameTimestamp = false;
+            chrome.storage.local.get("minutesPlay", function(storage) {
+                var minutesPlay = storage.minutesPlay;
+                if (!minutesPlay) {
+                    minutesPlay = 0;
+                }
+                minutesPlay = minutesPlay + minutes;
+                chrome.storage.local.set({
+                    "minutesPlay": minutesPlay
+                });
+                //console.log("!!!!!!!!!!!!!!!!!!!!!!!");
+                //console.log("PLAYED FOR " + minutesPlay);
+                //console.log("!!!!!!!!!!!!!!!!!!!!!!!");
+            });
+        }
+    }
+
     // Starts the extension
     function start() {
         addListeners();
@@ -886,6 +871,7 @@
         disableContextMenu();
         addTriggerKeyFunction();
         move("stop");
+        setupObservers();
     }
 
     // Stops the extension
@@ -897,6 +883,7 @@
         enableSpace();
         enableContextMenu();
         removeTriggerKeyFunction();
+        removeObservers();
     }
 
     // Detects if the page is an agario client
@@ -958,9 +945,6 @@
     // Start debug mode (toggle comment to enable / disable)
     // debug();
 
-    // Load Fairshare
-    insertFairshare();
-
     // Start it baby!
     if (detectAgario()) {
         addSwitch();
@@ -968,19 +952,37 @@
     }
 })(window);
 
-// #1 fix for CSS not injecting properly
-(function() {
-    var style = document.createElement("link");
-    style.rel = "stylesheet";
-    style.type = "text/css";
-    style.href = chrome.extension.getURL("style.css");
-    (document.head || document.documentElement).appendChild(style);
-})();
 
-// #2 fix
-(function() {
-    var style = ' position: fixed; z-index: 9999999; left: 80px; top: 13px; -webkit-user-select: none; font-size: 33px; line-height: 33px; animation-name: rainbow; animation-duration: 10s; animation-iteration-count: infinite; background-color: rgba(255, 255, 255, 0.75); padding: 10px; border-radius: 23px; cursor: default;';
-    var s = document.createElement("style");
-    s.innerHTML = style;
-    document.getElementsByTagName("head")[0].appendChild(s);
-})();
+// Hi googler, please don't remove my extension again
+// I really don't know what's the problem at this point
+
+// Why can't we be friends [4x]
+
+// I seen ya, I seen ya, I seen ya 'round for a long long time
+// I really, I really, I really remember when you drank my wine
+
+// Why can't we be friends [4x]
+
+// I seen ya, I seen ya, I seen ya walkin' down in Chinatown
+// I called ya, I called ya, I called but you did not look around
+// I pay my, I pay my, I pay my money to the welfare line
+// I seen ya, I seen ya, I seen ya standing in it everytime
+
+// Why can't we be friends [4x]
+
+// The color, the color, the color of your skin don't matter to me
+// As long as, as long as, long as we can live in harmony
+// I kinda, I kinda, I kinda, like to be the president
+// And I could, and I could, and I could show you how your money's spent
+
+// Why can't we be friends [4x]
+
+// Sometimes I don't speak right
+// But did I know what I was talking about
+// I know you're working for the CIA 
+// They wouldn't have you in the mafia 
+
+// Why can't we be friends [4x]
+// [Repeat to fade]
+
+// <3
